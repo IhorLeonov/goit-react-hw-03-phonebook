@@ -5,8 +5,10 @@ import { Layout } from 'components/layout/Layout';
 import { ContactForm } from 'components/contactForm/ContactForm';
 import { ContactList } from 'components/contactList/ContactList';
 import { Filter } from 'components/filter/Filter';
-import { MainTitle, Phonebook, SecondTitle } from './App.styled';
+import { MainTitle, Phonebook, SecondTitle } from 'components/app/App.styled';
 import { Notification } from 'components/notification/Notification';
+
+const LS_KEY = 'contacts-from-state';
 
 export class App extends Component {
   state = {
@@ -18,6 +20,19 @@ export class App extends Component {
     ],
     filter: '',
   };
+
+  componentDidMount() {
+    const savedContacts = localStorage.getItem(LS_KEY);
+    if (savedContacts !== null) {
+      const parsedContacts = JSON.parse(savedContacts);
+      this.setState({ contacts: parsedContacts });
+    }
+  }
+  componentDidUpdate(prevProps, prevState) {
+    if (prevState.contacts !== this.state.contacts) {
+      localStorage.setItem(LS_KEY, JSON.stringify(this.state.contacts));
+    }
+  }
 
   addContact = (name, number) => {
     const contact = {
@@ -83,4 +98,3 @@ export class App extends Component {
     );
   }
 }
-
